@@ -1,4 +1,4 @@
-unit uCommon;
+п»їunit uCommon;
 
 interface
 
@@ -396,23 +396,23 @@ end;
 
 procedure MsgError(const AMsg: string);
 begin
-  Application.MessageBox(PChar(AMsg), 'Ошибка', MB_OK + MB_ICONERROR);
+  Application.MessageBox(PChar(AMsg), 'РћС€РёР±РєР°', MB_OK + MB_ICONERROR);
 end;
 
 procedure MsgWarning(const AMsg: string);
 begin
-  Application.MessageBox(PChar(AMsg), 'Предупреждение', MB_OK + MB_ICONWARNING);
+  Application.MessageBox(PChar(AMsg), 'РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ', MB_OK + MB_ICONWARNING);
 end;
 
 procedure MsgInformation(const AMsg: string);
 begin
-  Application.MessageBox(PChar(AMsg), 'Информация', MB_OK + MB_ICONINFORMATION);
+  Application.MessageBox(PChar(AMsg), 'РРЅС„РѕСЂРјР°С†РёСЏ', MB_OK + MB_ICONINFORMATION);
 end;
 
 function MsgConfirmation(const AMsg: string): Boolean;
 begin
   result := False;
-  if Application.MessageBox(PChar(AMsg), 'Подтвердите', MB_YESNO + MB_ICONQUESTION) = ID_YES then
+  if Application.MessageBox(PChar(AMsg), 'РџРѕРґС‚РІРµСЂРґРёС‚Рµ', MB_YESNO + MB_ICONQUESTION) = ID_YES then
     result := True;
 end;
 
@@ -421,7 +421,7 @@ begin
   // 0=ID_CANCEL
   // 1=ID_YES
   // 2=ID_NO
-  case Application.MessageBox(PChar(AMsg), 'Подтвердите', MB_YESNOCANCEL + MB_ICONQUESTION) of
+  case Application.MessageBox(PChar(AMsg), 'РџРѕРґС‚РІРµСЂРґРёС‚Рµ', MB_YESNOCANCEL + MB_ICONQUESTION) of
     ID_CANCEL:
       result := 0;
     ID_YES:
@@ -444,7 +444,7 @@ class function TEnumUtils.GetTypeInfo<T>: PTypeInfo;
 begin
   Result := System.TypeInfo(T);
   if Result.Kind <> tkEnumeration then
-    raise Exception.Create('Тип T должен быть перечислением');
+    raise Exception.Create('РўРёРї T РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїРµСЂРµС‡РёСЃР»РµРЅРёРµРј');
 end;
 
 class function TEnumUtils.AsString<T>(const Value: T): string;
@@ -458,7 +458,7 @@ var
 begin
   Value := GetEnumValue(GetTypeInfo<T>, Str);
   if Value = -1 then
-    raise Exception.CreateFmt('Неверное значение перечисления: %s', [Str]);
+    raise Exception.CreateFmt('РќРµРІРµСЂРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ: %s', [Str]);
   PByte(@Result)^ := Value;
 end;
 
@@ -474,7 +474,7 @@ var
 begin
   TypeData := GetTypeData(GetTypeInfo<T>);
   if (Index < TypeData.MinValue) or (Index > TypeData.MaxValue) then
-    raise Exception.CreateFmt('Индекс %d вне диапазона перечисления', [Index]);
+    raise Exception.CreateFmt('РРЅРґРµРєСЃ %d РІРЅРµ РґРёР°РїР°Р·РѕРЅР° РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ', [Index]);
   Result := GetEnumName(GetTypeInfo<T>, Index);
 end;
 

@@ -1,4 +1,4 @@
-{*******************************************************}
+Ôªø{*******************************************************}
 {                                                       }
 {           Mamykin Sergey                              }
 {                                                       }
@@ -1189,7 +1189,7 @@ var
   S: string;
 begin
   S := AnsiUpperCase(Trim((ReadValue(SectionID, KeyName))));
-  Result := (S = 'TRUE') or (S = '1') or (S = 'YES') or (S = 'ƒ¿');
+  Result := (S = 'TRUE') or (S = '1') or (S = 'YES') or (S = '–î–ê');
 end;
 
 function TmsaSQLiteUserDatabase.GetSectionFullPath(const SectionID: Integer): string;

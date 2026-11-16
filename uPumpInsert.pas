@@ -1,4 +1,4 @@
-unit uPumpInsert;
+п»їunit uPumpInsert;
 
 interface
 
@@ -86,12 +86,12 @@ begin
 
     if PkCols.Count = 0 then
     begin
-      Result.ErrorMsg := 'первичный ключ не найден';
+      Result.ErrorMsg := 'РїРµСЂРІРёС‡РЅС‹Р№ РєР»СЋС‡ РЅРµ РЅР°Р№РґРµРЅ';
       Exit;
     end;
     if PkCols.Count > 1 then
     begin
-      Result.ErrorMsg := Format('составной PK (%d колонки) — не поддерживается',
+      Result.ErrorMsg := Format('СЃРѕСЃС‚Р°РІРЅРѕР№ PK (%d РєРѕР»РѕРЅРєРё) вЂ” РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚СЃСЏ',
         [PkCols.Count]);
       Exit;
     end;
@@ -113,7 +113,7 @@ begin
       Q.Open;
       if Q.IsEmpty then
       begin
-        Result.ErrorMsg := 'PK-колонка не найдена в INFORMATION_SCHEMA.COLUMNS';
+        Result.ErrorMsg := 'PK-РєРѕР»РѕРЅРєР° РЅРµ РЅР°Р№РґРµРЅР° РІ INFORMATION_SCHEMA.COLUMNS';
         Exit;
       end;
 
@@ -131,12 +131,12 @@ begin
           Result.IsInt64 := True
         else
           Result.ErrorMsg := Format(
-            'PK numeric(%d,%d) — поддерживается только numeric(p,0) при p<=18',
+            'PK numeric(%d,%d) вЂ” РїРѕРґРґРµСЂР¶РёРІР°РµС‚СЃСЏ С‚РѕР»СЊРєРѕ numeric(p,0) РїСЂРё p<=18',
             [Precision, Scale]);
       end
       else
-        Result.ErrorMsg := 'PK тип "' + DataType +
-          '" не поддерживается (нужен целочисленный: ' +
+        Result.ErrorMsg := 'PK С‚РёРї "' + DataType +
+          '" РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚СЃСЏ (РЅСѓР¶РµРЅ С†РµР»РѕС‡РёСЃР»РµРЅРЅС‹Р№: ' +
           'int/bigint/smallint/tinyint/numeric(p,0))';
     finally
       Q.Free;
@@ -287,7 +287,7 @@ begin
         Info.Precision := 0;
         Info.Scale := 0;
         Info.Size := 0;
-        GLog('Special: неизвестный тип target ' + DT + ' для поля ' +
+        GLog('Special: РЅРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї target ' + DT + ' РґР»СЏ РїРѕР»СЏ ' +
           Q.FieldByName('COLUMN_NAME').AsString, llWarning);
       end;
 

@@ -1,4 +1,4 @@
-program msadpsvc74;
+﻿program msadpsvc74;
 
 {$I MyService.inc}
 
