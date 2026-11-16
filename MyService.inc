@@ -1,0 +1,3 @@
+//{$DEFINE SVC_APP}
+{$DEFINE GUI_APP}
+
