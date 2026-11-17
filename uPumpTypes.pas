@@ -1,10 +1,10 @@
-unit uPumpTypes;
+﻿unit uPumpTypes;
 
 interface
 
-uses
-  System.SysUtils, System.Classes, System.Generics.Collections, System.SyncObjs, MSA.Logger, FireDAC.Comp.Client,
-  FireDAC.Stan.Option;
+ uses
+  System.SysUtils, System.Classes, System.Generics.Collections, System.SyncObjs, MSA.Logger,
+  FireDAC.Comp.Client, FireDAC.Stan.Option;
 
 type
   TDBKind = (dbSource, dbTarget);
@@ -31,12 +31,15 @@ type
     GapFillWorkerCount: Integer;
     GapFillIntervalSec: Integer;
 
-    UpdateTables: string;
-    UpdateIntervalSec: Integer;
+    UpdateTables: string;         // 'tiger.T1;tiger.T2'
+    UpdateIntervalSec: Integer;   // 0 = один раз при старте
     UpdateWorkerCount: Integer;
 
-    PQProgressEverySec: Integer;
-    PQMaxConcurrentWorkers: Integer;
+
+    // --- PQ (параметризованные запросы) ---
+    // Общие для всех PQ-воркеров настройки, читаются из PumpOptions.
+    PQProgressEverySec: Integer;      // как часто логировать прогресс (сек)
+    PQMaxConcurrentWorkers: Integer;  // макс. число одновременно работающих PQ-воркеров
   end;
 
   TQueries = record
@@ -82,39 +85,32 @@ type
   end;
 
   TSpecialDataSource = record
-    TableName: string;
-    SectionName: string;
-    QueryIndex: Integer;
-    SelectSQL: string;
-    InsertSQL: string;
-    IntervalSec: Integer;
+    TableName: string;    // = имя секции (schema.table)
+    SectionName: string;     // имя раздела как в конфиге: "TIGER.CARD_CALC #2"
+    QueryIndex: Integer;     // 1, 2, 3… (для #N)
+    SelectSQL: string;    // SELECT из Oracle (из конфига)
+    InsertSQL: string;    // INSERT ... WHERE NOT EXISTS (генерируется)
+    IntervalSec: Integer; // 0 = один раз
     Enabled: Boolean;
     CheckExists: Boolean;
-    CommitEvery: Integer;
+    CommitEvery: Integer;  //10000
   end;
 
+  // PQ: один набор значений параметров = один экземпляр воркера (поток)
+  // Хранится как TArray<string> — конвертация в нужный тип выполняется при биндинге
   TPQParamSet = TArray<string>;
 
   TPQDataSource = record
-    SectionName: string;
-    TableName: string;
-    SelectSQL: string;
-    ParamNames: TArray<string>;
-    ParamValues: TArray<TPQParamSet>;
-    ChunkSize: Integer;
-    CommitEvery: Integer;
-    Enabled: Boolean;
-    IntervalSec: Integer;
-
-    TotalRows: Int64;
-    MinPK: Int64;
-    MaxPK: Int64;
-    CountSQL: string;
-    MinPKSQL: string;
-    MaxPKSQL: string;
-
-    RowIdSQL: string;
-    RidChunkWorkers: Integer;
+    SectionName: string;  // имя раздела как в конфиге
+    TableName: string;  //Таблица, которую будем обновлять (MS SQL)
+    SelectSQL: string;  //Запрос к Oracle для получения данных, которыми будем обновлять
+    ParamNames: TArray<string>;  //Имена параметров через;
+    ParamValues: TArray<TPQParamSet>;  //Значения параметров
+    ChunkSize: Integer;   //Размер порции данных
+    CommitEvery: Integer; //   10000
+    Enabled: Boolean;   //Доступен/не доступен
+    IntervalSec: Integer;  // 0 = один раз
+    RidChunkWorkers: Integer;   // число параллельных воркеров
   end;
 
 type
@@ -123,8 +119,9 @@ type
   TLogProc = procedure(const Msg: string; Level: TLogLevel);
 
 const
-  PUMP_OPS_NAMES: array[TPumpOperation] of string =
+ PUMP_OPS_NAMES: array[TPumpOperation] of string =
     ('Append', 'GapFill', 'Special', 'Update', 'PQ');
+
   PUMP_INSERT_BATCH = 500;
   PUMP_COMMIT_EVERY = 10;
   PUMP_PROGRESS_MS = 10000;
@@ -148,11 +145,9 @@ var
   GUpdateQueries: TDictionary<string, TQueries>;
 
 procedure GLog(const Msg: string; Level: TLogLevel = llInfo);
-
 function JoinStrArray(const A: TArray<string>; const Sep: string = ';'): string;
 
 function CurrentSettings: TPumpSettings;
-
 procedure MakeQueryStreaming(Q: TFDQuery; ARowsetSize: Integer = 2000);
 
 procedure UpdateTableStat(const ATableName: string; ARowsRead, ARowsWritten, AElapsedMs: Int64; AGapFilled: Int64 = 0;
@@ -179,8 +174,7 @@ begin
   Result := '';
   for I := 0 to High(A) do
   begin
-    if I > 0 then
-      Result := Result + Sep;
+    if I > 0 then Result := Result + Sep;
     Result := Result + A[I];
   end;
 end;
